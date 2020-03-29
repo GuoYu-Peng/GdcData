@@ -7,9 +7,14 @@
 **MergeExpressionData**  
 合并下载的文件。  
   
-**Ensembl2Symbol.R**  
-下载的表达值文件合并后基因ID默认为 Ensembl ID 用这个脚本添加 SYMBOL 和 ENTREZ ID 。  
+**Ensembl2Symbol**  
+下载的表达值文件合并后基因ID默认为 Ensembl ID 用 BioMart 添加 SYMBOL 和 ENTREZ ID 。  
+分为在线版和本地版，本地版需要下载 BioMart 数据库信息。  
   
 **FPKM2TPM.R**  
 将 FPKM 矩阵转换到 TPM 。  
 **注意：** 不建议这么做！  
+  
+**Log2FPKM.R**  
+进行 `log2(FPKM + 1)` 转换。  
+

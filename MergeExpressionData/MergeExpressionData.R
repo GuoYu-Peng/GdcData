@@ -5,15 +5,12 @@
 # 本脚本在 R 3.6 环境测试通过
 # 需要先安装R包 tidyverse
 
-
-library(tidyverse, quietly = TRUE)
-
-writeLines("Rscript MergeExpressionData.R FileList.csv FileDir Output.csv")
-writeLines("\n")
+writeLines("Rscript MergeExpressionData.R FileList.csv FileDir Output.csv\n\n")
 
 argvs <- commandArgs(TRUE)
 stopifnot(length(argvs) >= 3)
 fileDir <- argvs[2]
+library(tidyverse, quietly = TRUE)
 
 # 要求信息表里必须包含 sample_id 和 filename 2列
 # fileTable <- read_tsv(argvs[1]) %>% dplyr::select(sample_id, filename)
