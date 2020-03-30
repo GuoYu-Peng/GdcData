@@ -11,9 +11,14 @@ library(tidyverse, quietly = TRUE)
 allSample <- read_tsv(argvs[1]) %>% dplyr::select(`File Name`, `Case ID`, `Sample ID`, `Sample Type`) %>% dplyr::rename(filename=`File Name`, case_id = `Case ID`, sample_id = `Sample ID`, sample_type = `Sample Type`)
 
 # 多个相同 case_id 时保留最上面那一个
-nSample <- dplyr::filter(allSample, sample_type == "Solid Tissue Normal") %>% dplyr::distinct(case_id, .keep_all = TRUE)
-tSample <- dplyr::filter(allSample, sample_type == "Primary Tumor") %>% dplyr::distinct(case_id, .keep_all = TRUE)
-neededSample <- dplyr::bind_rows(nSample, tSample)
+sampleTypes <- allSample$sample_type %>% unique()
+allSampleList <- list()
+for (i in 1:length(sampleTypes)) {
+  typeName <- sampleTypes[i]
+  typeSample <- dplyr::filter(allSample, sample_type==typeName) %>% dplyr::distinct(case_id, .keep_all = TRUE)
+  allSampleList[[i]] <- typeSample
+}
+neededSample <- dplyr::bind_rows(allSampleList)
 
 oList <- allSample$sample_id
 nList <- neededSample$sample_id
@@ -27,6 +32,9 @@ if (length(oList) != length(nList)) {
   print(dList)
 }
 
+caseNum <- neededSample$case_id %>% unique() %>% length()
+caseNumText <- stringr::str_glue("Cases：{caseNum}")
+writeLines(caseNumText)
 dplyr::count(neededSample, sample_type)
 
 write_csv(neededSample, path = argvs[2])
