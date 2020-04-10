@@ -3,7 +3,7 @@
 # 本脚本在 R 3.6 环境测试通过
 # 需要先安装R包 tidyverse
 
-writeLines("Rscript Log2FPKM.R input.csv output.csv\n\n")
+writeLines("Rscript Log2FPKM.R input.csv output.csv\n")
 
 argvs <- commandArgs(trailingOnly = TRUE)
 stopifnot(length(argvs) >= 2)

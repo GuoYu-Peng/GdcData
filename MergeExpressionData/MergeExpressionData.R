@@ -5,7 +5,7 @@
 # 本脚本在 R 3.6 环境测试通过
 # 需要先安装R包 tidyverse
 
-writeLines("Rscript MergeExpressionData.R FileList.csv FileDir Output.csv\n\n")
+writeLines("Rscript MergeExpressionData.R FileList.csv FileDir Output.csv\n")
 
 argvs <- commandArgs(TRUE)
 stopifnot(length(argvs) >= 3)

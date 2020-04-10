@@ -4,7 +4,7 @@
 # 默认输入文件第一列是基因名，且列名为 gene_id
 # 脚本在 R 3.6 环境测试通过，需要 tidyverse 包
 
-writeLines("Rscript Ensembl2SymbolLocal.R BioMart.tsv Input.csv Output.csv\n\n")
+writeLines("Rscript Ensembl2SymbolLocal.R BioMart.tsv Input.csv Output.csv\n")
 argvs <- commandArgs(trailingOnly = TRUE)
 stopifnot(length(argvs) >= 3)
 library(tidyverse, quietly = TRUE)

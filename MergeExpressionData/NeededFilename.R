@@ -3,7 +3,7 @@
 # 需要 tidyverse, 脚本在 R 3.6 环境测试通过
 
 # InFileList.csv 是已有的 FileList 文件
-writeLines("Rscript NeededFilename.R SampleSheet.tsv InFileList.csv OutFileList.csv\n\n")
+writeLines("Rscript NeededFilename.R SampleSheet.tsv InFileList.csv OutFileList.csv\n")
 argvs <- commandArgs(trailingOnly = TRUE)
 stopifnot(length(argvs) >= 3)
 

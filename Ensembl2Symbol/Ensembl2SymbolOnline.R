@@ -5,7 +5,7 @@
 # - tydyverse
 # - biomaRt
 
-writeLines("Rscript Ensembl2Symbol.R input.csv output.csv\n\n")
+writeLines("Rscript Ensembl2Symbol.R input.csv output.csv\n")
 
 argvs <- commandArgs(trailingOnly = TRUE)
 stopifnot(length(argvs) >= 2)

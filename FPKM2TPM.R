@@ -3,7 +3,7 @@
 # 本脚本默认第一列为基因名第一行为样品名，并且输出到 csv 格式文件
 # 本脚本在 R 3.6 测试通过
 
-writeLines("Rscript FPKM2TPM.R FPKM.csv TPM.csv\n\n")
+writeLines("Rscript FPKM2TPM.R FPKM.csv TPM.csv\n")
 
 argvs <- commandArgs(TRUE)
 stopifnot(length(argvs) >= 2)

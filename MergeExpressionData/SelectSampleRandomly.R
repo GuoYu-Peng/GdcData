@@ -3,7 +3,7 @@
 # 输出文件可以作为 MergeExpressionData.R 脚本的 FileList.csv 输入
 # 需要 tidyverse 包，脚本在 R 3.6 环境测试通过
 
-writeLines("Rscript SelectSampleRandomly.R SampleSheet.tsv FileList.csv\n\n")
+writeLines("Rscript SelectSampleRandomly.R SampleSheet.tsv FileList.csv\n")
 argvs <- commandArgs(trailingOnly = TRUE)
 stopifnot(length(argvs) >= 2)
 
@@ -23,8 +23,8 @@ neededSample <- dplyr::bind_rows(allSampleList)
 oList <- allSample$sample_id
 nList <- neededSample$sample_id
 
-if (length(oList) != length(nList)) {
-  n <- length(oList) - length(nList)
+n <- length(unique(oList)) - length(unique(nList))
+if (n > 0) {
   dList <- setdiff(oList, nList)
   text1 <- stringr::str_glue("移除的样本数目：{n}")
   writeLines(text1)
