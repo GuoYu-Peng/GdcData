@@ -5,24 +5,32 @@
 # - tydyverse
 # - biomaRt
 
-writeLines("Rscript Ensembl2Symbol.R input.csv output.csv\n")
+writeLines("\nRscript Ensembl2Symbol.R input.csv output.csv\n")
 
 argvs <- commandArgs(trailingOnly = TRUE)
 stopifnot(length(argvs) >= 2)
+inPath <- file.path(argvs[1])
+outPath <- file.path(argvs[2])
+msg1 <- stringr::str_glue("\n输入：{inPath}\n")
+msg2 <- stringr::str_glue("输出：{outPath\n}")
+writeLines(msg1)
+writeLines(msg2)
 
-library(tidyverse, quietly = TRUE)
-library(biomaRt, quietly = TRUE)
+library(tidyverse, quietly = TRUE, verbose = FALSE)
+library(biomaRt, quietly = TRUE, verbose = FALSE)
 
 # GDC下载的表达文件 ensembl gene ID 是包含版本号的，将版本号信息移除
-geneExpr <- read_csv(argvs[1]) %>% tidyr::separate(col = gene_id, into = c("ensembl_gene_id", "Gversion", sep="\\.", remove=TRUE, extra="merge", fill="right")) %>% dplyr::select(- gene_id)
+geneExpr <- readr::read_csv(inPath) %>% tidyr::separate(col = gene_id, into = c("ensembl_gene_id", "Gversion"), sep="\\.", remove=TRUE, extra="merge", fill="right") %>% dplyr::select(- Gversion)
 
 ensembl <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
-geneMap <- getBM(attributes = c("ensembl_gene_id", "entrezgene_id", "hgnc_symbol"), filters = "ensembl_gene_id", values = geneExpr$ensembl_gene_id, mart = ensembl) %>% dplyr::filter(!(is.na(entrezgene_id) & is.na(hgnc_symbol))) %>% dplyr::distinct(ensembl_gene_id, .keep_all = TRUE)
-dim(geneMap)
-head(geneMap, n = 3)
+# 排列时让 NA 处于下游
+geneMap <- getBM(attributes = c("ensembl_gene_id", "entrezgene_id", "hgnc_symbol"), filters = "ensembl_gene_id", values = geneExpr$ensembl_gene_id, mart = ensembl) %>% 
+  dplyr::filter(!(is.na(entrezgene_id) & is.na(hgnc_symbol))) %>% dplyr::arrange(entrezgene_id, desc(hgnc_symbol)) %>% 
+  dplyr::distinct(ensembl_gene_id, .keep_all = TRUE)
+dplyr::glimpse(geneMap)
 
 geneExpr2 <- dplyr::left_join(geneExpr, geneMap, by = "ensembl_gene_id") %>% dplyr::select(ensembl_gene_id, entrezgene_id, hgnc_symbol, everything())
-head(geneExpr2, n = 3)
-write_csv(geneExpr2, path = argvs[2])
+dplyr::glimpse(geneExpr2)
+write_csv(geneExpr2, outPath)
 
-writeLines("完成")
+writeLines("\n完成\n")

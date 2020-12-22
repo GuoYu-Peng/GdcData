@@ -1,26 +1,26 @@
 '''
-提供 GDC Menifest 文件，批量下载 GDC 文件。
+提供 GDC Manifest 文件，批量下载 GDC 文件。
 
 脚本在 Python 3.7 环境测试通过。
 要求 Python 已安装以下模块：
+ - argparse
  - requests
  - json
 '''
 
-import sys
+import argparse
 import pathlib
 import requests
 import json
 import re
 
-print('python GdcApi.py Menifest.txt OutputDir')
-print('-'*50)
-print('')
-
-argvs = sys.argv
-in_path = pathlib.Path(argvs[1])
-out_dir = pathlib.Path(argvs[2])
-print(f'输入Menifest: {in_path}')
+parser = argparse.ArgumentParser(description="根据 Manifest 用 GDC Api 下载 TCGA 数据。", add_help=True)
+parser.add_argument("-m", "--manifest", dest="MNF", help="Manifest 文件路径")
+parser.add_argument("-o", "--outdir", dest="OTD", help="下载到目录")
+argvs = parser.parse_args()
+in_path = pathlib.Path(argvs.MNF).resolve()
+out_dir = pathlib.Path(argvs.OTD).resolve()
+print(f'输入 Manifest: {in_path}')
 
 data_endpt = 'https://api.gdc.cancer.gov/data'
 file_id = []
@@ -32,7 +32,7 @@ with open(in_path, 'r') as f:
         file_id.append(name)
 
 file_num = len(file_id)
-print(f'文件总数目：{file_num}')
+print(f'下载文件数：{file_num}')
 
 params = {"ids": file_id}
 

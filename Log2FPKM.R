@@ -3,19 +3,25 @@
 # 本脚本在 R 3.6 环境测试通过
 # 需要先安装R包 tidyverse
 
-writeLines("Rscript Log2FPKM.R input.csv output.csv\n")
+writeLines("\nRscript Log2FPKM.R input.csv output.csv\n")
 
 argvs <- commandArgs(trailingOnly = TRUE)
 stopifnot(length(argvs) >= 2)
+inPath <- file.path(argvs[1])
+outPath <- file.path(argvs[2])
+msg1 <- stringr::str_glue("\n输入路径：{inPath}\n")
+msg2 <- stringr::str_glue("输出路径：{outPath}\n")
+writeLines(msg1)
+writeLines(msg2)
 
-library(tidyverse, quietly = TRUE)
+library(tidyverse, quietly = TRUE, verbose = FALSE)
 
-fpkm <- read_csv(argvs[1])
+fpkm <- read_csv(inPath)
 geneId <- dplyr::select(fpkm, gene_id)
 sampleFpkm <- dplyr::select(fpkm, - gene_id)
 lSampleFpkm <- log2(sampleFpkm + 1)
 
 lFpkm <- dplyr::bind_cols(geneId, lSampleFpkm)
-write_csv(lFpkm, path = argvs[2])
+write_csv(lFpkm, outPath)
 
-writeLines("完成")
+writeLines("\n完成\n")
