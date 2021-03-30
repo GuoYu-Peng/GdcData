@@ -6,18 +6,21 @@
 # 然后输出的文件作为本脚本的输入文件
 # 输出文件可以作为 MergeExpressionData.R 脚本的 FileList.csv 输入
 # 需要 tidyverse 包，脚本在 R 3.6 环境测试通过
+# 需要以下 R 包依赖
+# argparse, tidyverse
 
-writeLines("\nRscript SelectSampleRandomly.R SampleSheet.csv FileList.csv\n")
-argvs <- commandArgs(trailingOnly = TRUE)
-stopifnot(length(argvs) >= 2)
-inPath <- file.path(argvs[1])
-outPath <- file.path(argvs[2])
-msg1 <- stringr::str_glue("\nSampleShees 路径：{inPath}\n")
-msg2 <- stringr::str_glue("输出路径：{outPath}\n\n")
-writeLines(msg1)
-writeLines(msg2)
 
-library(tidyverse, quietly = TRUE, verbose = FALSE)
+suppressPackageStartupMessages(library(argparse))
+suppressPackageStartupMessages(library(tidyverse))
+
+infoText <- "当 TCGA 数据集有病例多个表达量文件时，只选取其中一个，另外是将 FFPE 样本移除"
+parser <- ArgumentParser(description = infoText, add_help = TRUE)
+parser$add_argument("--sample-sheet", dest = "SAMPLESHEET", help = "csv 格式的 SampleSheet 输入，是 AnnotateSamplesheet.R 脚本的输出", required = TRUE)
+parser$add_argument("--output", dest = "OUTPUT", help = "输出路径", required = TRUE)
+
+argvs <- parser$parse_args()
+inPath <- file.path(argvs$SAMPLESHEET)
+outPath <- file.path(argvs$OUTPUT)
 
 # 先移除 FFPE 样本数据
 allSample <- read_csv(inPath) %>% dplyr::filter(!is_ffpe)
@@ -36,6 +39,6 @@ caseNumText <- stringr::str_glue("选取的病例数：{caseNum}")
 writeLines(caseNumText)
 dplyr::count(neededSample, sample_type)
 dplyr::count(neededSample, case_id) %>% dplyr::filter(n >= 2)
+write_csv(neededSample, outPath)
 
-readr::write_csv(neededSample, outPath)
 writeLines("\n完成\n")

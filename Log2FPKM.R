@@ -1,20 +1,22 @@
-# 将合并好的 FPKM 矩阵进行 log2(fpkm + 1) 转换
+# 将合并好的 FPKM 矩阵进行 log2(FPKM + 1) 转换
 # 要求第一列为基因名 gene_id
 # 本脚本在 R 3.6 环境测试通过
-# 需要先安装R包 tidyverse
+# 依赖以下 R 包： 
+# argparse, tidyverse
 
-writeLines("\nRscript Log2FPKM.R input.csv output.csv\n")
 
-argvs <- commandArgs(trailingOnly = TRUE)
-stopifnot(length(argvs) >= 2)
-inPath <- file.path(argvs[1])
-outPath <- file.path(argvs[2])
-msg1 <- stringr::str_glue("\n输入路径：{inPath}\n")
-msg2 <- stringr::str_glue("输出路径：{outPath}\n")
-writeLines(msg1)
-writeLines(msg2)
+suppressPackageStartupMessages(library(argparse))
+suppressPackageStartupMessages(library(tidyverse))
 
-library(tidyverse, quietly = TRUE, verbose = FALSE)
+infoText <- "将 FPKM 矩阵进行 log2(FPKM + 1) 转换"
+parser <- ArgumentParser(description = infoText, add_help = TRUE)
+parser$add_argument("--input", dest = "INPUT", help = "csv 格式的 FPKM 输入路径，要求第一列表头为 \"gene_id\"", 
+                    required = TRUE)
+parser$add_argument("--output", dest = "OUTPUT", help = "输出路径", required = TRUE)
+
+argvs <- parser$parse_args()
+inPath <- file.path(argvs$INPUT)
+outPath <- file.path(argvs$OUTPUT)
 
 fpkm <- read_csv(inPath)
 geneId <- dplyr::select(fpkm, gene_id)
